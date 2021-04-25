@@ -1,19 +1,55 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
-import { actionUserName } from '../../../config/redux/action';
+import { loginApi } from '../../../config/redux/action';
+import Button from '../../../components/atoms/Button';
 
 class Login extends Component {
-	changeuser = () => {
-		this.props.changeUserName();
+	state = {
+		email: '',
+		password: '',
+	};
+
+	handleChangeText = (e) => {
+		this.setState({
+			[e.target.id]: e.target.value,
+		});
+	};
+
+	handleLoginSubmit = () => {
+		this.props.loginApi(this.state);
+		this.setState({
+			email: '',
+			password: '',
+		});
 	};
 
 	render() {
 		return (
-			<div>
-				<p>Login Page {this.props.userName}</p>
-				<button>Go to Register</button>
-				<button onClick={this.changeuser}>Change User Name</button>
+			<div className="auth-container">
+				<div className="auth-card">
+					<p className="auth-title">Login Form</p>
+					<input
+						id="email"
+						className="input"
+						type="text"
+						placeholder="Email"
+						onChange={this.handleChangeText}
+						value={this.state.email}
+					/>
+					<input
+						id="password"
+						className="input"
+						type="password"
+						placeholder="Password"
+						onChange={this.handleChangeText}
+						value={this.state.password}
+					/>
+					<Button
+						onClick={this.handleLoginSubmit}
+						title="Login"
+						isLoading={this.props.isLoading}
+					/>
+				</div>
 			</div>
 		);
 	}
@@ -21,13 +57,12 @@ class Login extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		popupProps: state.popup,
-		userName: state.user,
+		isLoading: state.isLoading,
 	};
 };
 
 const reduxDispatch = (dispatch) => ({
-	changeUserName: () => dispatch(actionUserName()),
+	loginApi: (data) => dispatch(loginApi(data)),
 });
 
 export default connect(mapStateToProps, reduxDispatch)(Login);
