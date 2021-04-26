@@ -15,12 +15,21 @@ class Login extends Component {
 		});
 	};
 
-	handleLoginSubmit = () => {
-		this.props.loginApi(this.state);
-		this.setState({
-			email: '',
-			password: '',
-		});
+	handleLoginSubmit = async () => {
+		const res = await this.props.loginApi(this.state).catch((err) => err);
+		const { history } = this.props;
+
+		if (res) {
+			console.log('Login is Success');
+			this.setState({
+				email: '',
+				password: '',
+			});
+
+			history.push('/');
+		} else {
+			console.log('Login Failed');
+		}
 	};
 
 	render() {

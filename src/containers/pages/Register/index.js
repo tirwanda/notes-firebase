@@ -17,12 +17,17 @@ class Register extends Component {
 		});
 	};
 
-	handleRegisterSubmit = () => {
-		this.props.registerApi(this.state);
-		this.setState({
-			email: '',
-			password: '',
-		});
+	handleRegisterSubmit = async () => {
+		const res = await this.props.registerApi(this.state);
+		if (res) {
+			this.setState({
+				email: '',
+				password: '',
+			});
+			console.log('Register Succsess');
+		} else {
+			console.log('Register Failed');
+		}
 	};
 
 	render() {
@@ -48,7 +53,7 @@ class Register extends Component {
 					/>
 					<Button
 						onClick={this.handleRegisterSubmit}
-						title={Register}
+						title="Register"
 						isLoading={this.props.isLoading}
 					/>
 				</div>
