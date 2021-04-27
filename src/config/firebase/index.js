@@ -1,9 +1,10 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import 'firebase/database';
 // import 'firebase/firestore'
 // import 'firebase/analytics';
 
-var firebaseConfig = {
+const firebaseConfig = {
 	apiKey: 'AIzaSyCgGJTjxPr_zlX2pFVdIy0i0CpPy6rWnGY',
 	authDomain: 'notes-firebase-6f649.firebaseapp.com',
 	projectId: 'notes-firebase-6f649',
@@ -16,4 +17,5 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 // firebase.analytics();
 
+export const database = firebase.database();
 export default firebase;

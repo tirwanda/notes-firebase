@@ -1,4 +1,4 @@
-import firebase from '../../firebase';
+import firebase, { database } from '../../firebase';
 
 export const actionUserName = () => {
 	return (dispatch) => {
@@ -39,16 +39,16 @@ export const loginApi = (data) => (dispatch) => {
 			.auth()
 			.signInWithEmailAndPassword(data.email, data.password)
 			.then((res) => {
-				console.log('Success: ', res);
 				const dataUser = {
 					email: res.user.email,
 					uid: res.user.uid,
 					emailVerified: res.user.emailVerified,
+					refreshToken: res.user.refreshToken,
 				};
 				dispatch({ type: 'CHANGE_LOADING', value: false });
 				dispatch({ type: 'CHANGE_ISLOGIN', value: true });
 				dispatch({ type: 'CHANGE_USER', value: dataUser });
-				resolve(true);
+				resolve(dataUser);
 			})
 			.catch((error) => {
 				var errorCode = error.code;
@@ -59,5 +59,13 @@ export const loginApi = (data) => (dispatch) => {
 				dispatch({ type: 'CHANGE_ISLOGIN', value: false });
 				reject(false);
 			});
+	});
+};
+
+export const addDataToApi = (data) => (dispatch) => {
+	database.ref('notes/' + data.userId).push({
+		title: data.title,
+		date: data.date,
+		content: data.content,
 	});
 };
