@@ -26,6 +26,7 @@ class Login extends Component {
 				password: '',
 			});
 			console.log(res);
+			localStorage.setItem('userData', JSON.stringify(res));
 			history.push('/');
 		} else {
 			console.log('Login Failed');

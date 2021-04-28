@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { addDataToApi } from '../../../config/redux/action';
+import { addDataToApi, getDataFromApi } from '../../../config/redux/action';
 import './index.scss';
 
 class Dashboard extends Component {
@@ -11,15 +11,23 @@ class Dashboard extends Component {
 		userId: '',
 	};
 
+	getDataFirebase = () => {};
+
+	componentDidMount() {
+		const userData = JSON.parse(localStorage.getItem('userData'));
+		this.props.getNotes(userData.uid);
+	}
+
 	handleSaveNotes = () => {
 		const { title, content } = this.state;
 		const { saveNotes } = this.props;
+		const userData = JSON.parse(localStorage.getItem('userData'));
 
 		const data = {
 			title,
 			content,
 			date: new Date().getTime(),
-			userId: this.props.userData.uid,
+			userId: userData.uid,
 		};
 
 		saveNotes(data);
@@ -33,6 +41,9 @@ class Dashboard extends Component {
 	};
 
 	render() {
+		const { notes } = this.props;
+		console.log('notes: ', notes);
+
 		return (
 			<div className="container">
 				<div className="input-form">
@@ -56,11 +67,21 @@ class Dashboard extends Component {
 				</div>
 				<hr />
 
-				<div className="card-content">
-					<p className="title">{this.state.title}</p>
-					<p className="date">{this.state.date}</p>
-					<p className="content">{this.state.content}</p>
-				</div>
+				{notes.length > 0 ? (
+					<Fragment>
+						{notes.map((notes) => {
+							return (
+								<div className="card-content">
+									<p className="title">{notes.data.title}</p>
+									<p className="date">{notes.data.date}</p>
+									<p className="content">
+										{notes.data.content}
+									</p>
+								</div>
+							);
+						})}
+					</Fragment>
+				) : null}
 			</div>
 		);
 	}
@@ -68,10 +89,12 @@ class Dashboard extends Component {
 
 const reduxState = (state) => ({
 	userData: state.user,
+	notes: state.notes,
 });
 
 const reduxDispatch = (dispatch) => ({
 	saveNotes: (data) => dispatch(addDataToApi(data)),
+	getNotes: (data) => dispatch(getDataFromApi(data)),
 });
 
 export default connect(reduxState, reduxDispatch)(Dashboard);

@@ -69,3 +69,23 @@ export const addDataToApi = (data) => (dispatch) => {
 		content: data.content,
 	});
 };
+
+export const getDataFromApi = (userId) => (dispatch) => {
+	const urlNotes = firebase.database().ref('notes/' + userId);
+	return new Promise((resolve, reject) => {
+		urlNotes.on('value', (snapshot) => {
+			const rawData = snapshot.val();
+			const data = [];
+			Object.keys(snapshot.val()).forEach((key) => {
+				data.push({
+					id: key,
+					data: snapshot.val()[key],
+				});
+			});
+			dispatch({ type: 'GET_NOTES', value: data });
+			// updateStarCount(postElement, data);
+			console.log('Get Data: ', rawData);
+			resolve(snapshot.val());
+		});
+	});
+};
