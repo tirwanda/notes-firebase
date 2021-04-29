@@ -1,6 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { addDataToApi, getDataFromApi } from '../../../config/redux/action';
+import {
+	addDataToApi,
+	getDataFromApi,
+	updateDataApi,
+} from '../../../config/redux/action';
 import './index.scss';
 
 class Dashboard extends Component {
@@ -9,6 +13,8 @@ class Dashboard extends Component {
 		date: '',
 		content: '',
 		userId: '',
+		textButton: 'save',
+		noteId: '',
 	};
 
 	getDataFirebase = () => {};
@@ -19,8 +25,8 @@ class Dashboard extends Component {
 	}
 
 	handleSaveNotes = () => {
-		const { title, content } = this.state;
-		const { saveNotes } = this.props;
+		const { title, content, textButton, noteId } = this.state;
+		const { saveNotes, updateNotes } = this.props;
 		const userData = JSON.parse(localStorage.getItem('userData'));
 
 		const data = {
@@ -30,13 +36,36 @@ class Dashboard extends Component {
 			userId: userData.uid,
 		};
 
-		saveNotes(data);
+		if (textButton === 'save') {
+			saveNotes(data);
+		} else {
+			data.noteId = noteId;
+			updateNotes(data);
+		}
 		console.log(data);
 	};
 
 	onInputChange = (e) => {
 		this.setState({
 			[e.target.id]: e.target.value,
+		});
+	};
+
+	updateNotes = (notes) => {
+		console.log(notes);
+		this.setState({
+			title: notes.data.title,
+			content: notes.data.content,
+			textButton: 'update',
+			noteId: notes.id,
+		});
+	};
+
+	cancelUpdate = () => {
+		this.setState({
+			title: '',
+			content: '',
+			textButton: 'save',
 		});
 	};
 
@@ -52,6 +81,7 @@ class Dashboard extends Component {
 						className="input-title"
 						placeholder="Title"
 						type="text"
+						value={this.state.title}
 						onChange={this.onInputChange}
 					/>
 					<textarea
@@ -59,19 +89,38 @@ class Dashboard extends Component {
 						className="input-content"
 						placeholder="Description"
 						type="text"
+						value={this.state.content}
 						onChange={this.onInputChange}
 					/>
-					<button className="save-btn" onClick={this.handleSaveNotes}>
-						Save
-					</button>
+
+					<div className="action-wrapper">
+						{this.state.textButton === 'update' ? (
+							<button
+								className="save-btn cancel"
+								onClick={this.cancelUpdate}
+							>
+								Cancel
+							</button>
+						) : null}
+						<button
+							className="save-btn"
+							onClick={this.handleSaveNotes}
+						>
+							{this.state.textButton}
+						</button>
+					</div>
 				</div>
 				<hr />
 
 				{notes.length > 0 ? (
 					<Fragment>
-						{notes.map((notes) => {
+						{notes.map((notes, i) => {
 							return (
-								<div className="card-content">
+								<div
+									key={i}
+									className="card-content"
+									onClick={() => this.updateNotes(notes)}
+								>
 									<p className="title">{notes.data.title}</p>
 									<p className="date">{notes.data.date}</p>
 									<p className="content">
@@ -95,6 +144,7 @@ const reduxState = (state) => ({
 const reduxDispatch = (dispatch) => ({
 	saveNotes: (data) => dispatch(addDataToApi(data)),
 	getNotes: (data) => dispatch(getDataFromApi(data)),
+	updateNotes: (data) => dispatch(updateDataApi(data)),
 });
 
 export default connect(reduxState, reduxDispatch)(Dashboard);

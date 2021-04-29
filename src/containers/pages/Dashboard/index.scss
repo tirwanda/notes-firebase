@@ -48,6 +48,21 @@
 			font-weight: bold;
 			text-transform: uppercase;
 			outline: none;
+
+			&.cancel {
+				border: solid 2px orange;
+				color: orange;
+			}
+
+			&:hover {
+				cursor: pointer;
+			}
+		}
+
+		.action-wrapper {
+			display: flex;
+			justify-content: space-between;
+			width: 40%;
 		}
 	}
 
@@ -57,6 +72,13 @@
 		padding: 16px;
 		box-shadow: 4px 3px 9px rgba(0, 0, 0, 0.1);
 		margin-bottom: 1rem;
+		transition: all 0.2s ease-in-out;
+
+		&:hover {
+			cursor: pointer;
+			background: rgba(0, 0, 0, 0.1);
+			transform: translateY(-2px);
+		}
 
 		p {
 			margin: 0;

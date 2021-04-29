@@ -89,3 +89,25 @@ export const getDataFromApi = (userId) => (dispatch) => {
 		});
 	});
 };
+
+export const updateDataApi = (data) => (dispatch) => {
+	const urlNotes = firebase
+		.database()
+		.ref(`notes/${data.userId}/${data.noteId}`);
+	return new Promise((resolve, reject) => {
+		urlNotes.set(
+			{
+				title: data.title,
+				content: data.content,
+				date: data.date,
+			},
+			(error) => {
+				if (error) {
+					reject(false);
+				} else {
+					resolve(true);
+				}
+			}
+		);
+	});
+};
