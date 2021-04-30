@@ -111,3 +111,12 @@ export const updateDataApi = (data) => (dispatch) => {
 		);
 	});
 };
+
+export const deleteDataApi = (data) => (dispatch) => {
+	const urlNotes = firebase
+		.database()
+		.ref(`notes/${data.userId}/${data.noteId}`);
+	return new Promise((resolve, reject) => {
+		urlNotes.remove();
+	});
+};

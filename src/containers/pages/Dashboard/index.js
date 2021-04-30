@@ -4,6 +4,7 @@ import {
 	addDataToApi,
 	getDataFromApi,
 	updateDataApi,
+	deleteDataApi,
 } from '../../../config/redux/action';
 import './index.scss';
 
@@ -69,6 +70,17 @@ class Dashboard extends Component {
 		});
 	};
 
+	deleteNotes = (elem, note) => {
+		elem.stopPropagation(); // Stop Click parent element
+		const userData = JSON.parse(localStorage.getItem('userData'));
+		const data = {
+			userId: userData.uid,
+			noteId: note.id,
+		};
+
+		this.props.deleteNotes(data);
+	};
+
 	render() {
 		const { notes } = this.props;
 		console.log('notes: ', notes);
@@ -126,6 +138,14 @@ class Dashboard extends Component {
 									<p className="content">
 										{notes.data.content}
 									</p>
+									<div
+										className="delete-btn"
+										onClick={(elem) =>
+											this.deleteNotes(elem, notes)
+										}
+									>
+										X
+									</div>
 								</div>
 							);
 						})}
@@ -145,6 +165,7 @@ const reduxDispatch = (dispatch) => ({
 	saveNotes: (data) => dispatch(addDataToApi(data)),
 	getNotes: (data) => dispatch(getDataFromApi(data)),
 	updateNotes: (data) => dispatch(updateDataApi(data)),
+	deleteNotes: (data) => dispatch(deleteDataApi(data)),
 });
 
 export default connect(reduxState, reduxDispatch)(Dashboard);
